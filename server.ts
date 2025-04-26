@@ -1,17 +1,20 @@
-import { supabase } from "./config/supabase-client";
+import express from "express";
+import dotEnv from "dotenv";
+import router from "./routes/routes";
 
-async function fetchUsers() {
-	let { data, error } = await supabase.from("Users").select("*");
+dotEnv.config();
 
-	if (error) {
-		console.error("Error fetching Users:", error);
-		throw error;
-	}
+const app = express();
+const PORT = process.env.PORT;
 
-	if (data) {
-		console.log("Data:", data);
-	}
-	return data;
-}
+app.use(express.json());
 
-fetchUsers();
+app.get("/", (req, res) => {
+	res.send("basic route");
+});
+
+app.use("/api", router);
+
+app.listen(PORT, () => {
+	console.log(`Server is running on http://localhost:${PORT}`);
+});
